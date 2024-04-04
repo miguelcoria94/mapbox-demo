@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+
+<h1><%= title %></h1>
+
+<ul>
+  <% houses.forEach((house) => { %>
+  <li>
+    <h2><%= house.title %></h2>
+    <p><%= house.description %></p>
+    <p>$<%= house.price %></p>
+    <a href="/houses/<%= house._id %>">View Details</a>
+  </li>
+  <% }) %>
+</ul>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+  type="text/css"
+/>
+
+<div class="create__listing-container">
+  <div>
+    <h2><%= house.title %></h2>
+    <p><%= house.description %></p>
+    <p>$<%= house.price %></p>
+    <p><%= house.location %></p>
+  </div>
+
+  <div class="create__listing-map-container">
+    <div id="map"></div>
+  </div>
+</div>
+
+<script>
+  // Your existing Mapbox access token
+  mapboxgl.accessToken =
+    "pk.eyJ1IjoibWlndWVsY29yaWE5NCIsImEiOiJjbHVrcWVvMW8wc3RjMmtvbHl5ZXR2Z3QwIn0.bxt8wG687x_DDmuyAqJfNA";
+
+  // Initialize the map with a default location
+  const map = new mapboxgl.Map({
+    container: "map",
+    style: "mapbox://styles/mapbox/dark-v10",
+    center: [-79.4512, 43.6568], // This will be updated
+    zoom: 13,
+  });
+
+  // Initialize the Geocoder
+  const geocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl,
+  });
+
+  // Add the Geocoder control to the map
+  map.addControl(geocoder);
+
+  // Function to forward geocode the address and update the map
+  function forwardGeocodeAndUpdateMap(address) {
+    geocoder.query(address);
+    geocoder.on("result", function (e) {
+      const coordinates = e.result.geometry.coordinates;
+      map.flyTo({ center: coordinates, zoom: 13 });
+    });
+  }
+
+  // Assuming house.location contains the address string
+  const address = "<%= house.location %>"; // Ensure this is properly escaped to avoid XSS vulnerabilities
+  forwardGeocodeAndUpdateMap(address);
+</script>
+
+<%- include('../partials/footer') %>
